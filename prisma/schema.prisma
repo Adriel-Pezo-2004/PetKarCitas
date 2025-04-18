@@ -25,6 +25,7 @@ model Appointment {
   date        DateTime   // Fecha de la cita
   time        String     // Hora de la cita (ej: "14:30")
   address     String
+  zone        String
   status      Status     @default(SCHEDULED)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
