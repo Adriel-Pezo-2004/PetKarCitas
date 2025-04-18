@@ -53,10 +53,10 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { title, type, description, date, time, clientId, dni } = body;
+    const { title, type, description, date, time, address, clientId, dni } = body;
 
     // Validar datos requeridos
-    if (!title || !type || !date || !clientId || !dni) {
+    if (!title || !type || !date || ! address || !clientId || !dni) {
       return NextResponse.json(
         { error: 'Faltan campos requeridos' },
         { status: 400 }
@@ -107,6 +107,7 @@ export async function POST(request) {
         description,
         date: new Date(date),
         time,
+        address,
         dni,
         client: {
           connect: { id: clientId },

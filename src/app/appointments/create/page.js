@@ -59,6 +59,7 @@ const CreateAppointmentForm = () => {
           description: '',
           date: '',
           time: '',
+          address: '',
           clientId: '',
           dni: '',
         });
@@ -111,13 +112,25 @@ const CreateAppointmentForm = () => {
               required
             >
               <option value="" className="bg-gray-800">Seleccione un tipo</option>
-              <option value="Consulta" className="bg-gray-800">Consulta</option>
-              <option value="Examen" className="bg-gray-800">Examen</option>
-              <option value="Control" className="bg-gray-800">Control</option>
+              <option value="Spa" className="bg-gray-800">Spa</option>
+              <option value="Control Veterinario" className="bg-gray-800">Control Veterinario</option>
               <option value="Otro" className="bg-gray-800">Otro</option>
             </select>
           </div>
-
+          <div>
+            <label htmlFor="address" className="block text-sm font-medium text-gray-300 mb-2">
+              Dirección *
+            </label>
+            <input
+              type="text"
+              id="address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-gray-200"
+              required
+            />
+          </div>
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">
               Descripción
