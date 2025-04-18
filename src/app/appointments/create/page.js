@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
+import { format } from "date-fns";
 import { cn } from "@/lib/utils"
 
 const CreateAppointmentForm = () => {
