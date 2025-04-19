@@ -98,7 +98,7 @@ const CreateAppointmentForm = () => {
           date: dateTime.toISOString(),
         }),
       });
-  
+    
       if (response.ok) {
         setFormData({
           title: "",
@@ -111,7 +111,7 @@ const CreateAppointmentForm = () => {
           clientId: "",
           dni: "",
         });
-        setToastMessage('Cita creada exitosamente!');
+        setToastMessage("Cita creada exitosamente!");
         setOpenToast(true);
         setTimeout(() => {
           router.push(`/`);
@@ -121,9 +121,9 @@ const CreateAppointmentForm = () => {
         setToastMessage(`Error: ${errorData.error}`);
         setOpenToast(true);
       }
-    } catch (error) {
-        setToastMessage('Error desconocido.');
-        setOpenToast(true);
+    } catch {
+      setToastMessage("Error desconocido.");
+      setOpenToast(true);
     }
   };
 
