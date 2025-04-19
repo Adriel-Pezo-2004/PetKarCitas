@@ -111,7 +111,7 @@ const CreateClientForm = () => {
       
         setTimeout(() => {
           router.push(`/appointments/create?clientId=${client.id}`);
-        }, 3500);
+        }, 1000);
       } else {
         let errorText = await response.text();
         try {
@@ -120,7 +120,7 @@ const CreateClientForm = () => {
           setOpenToast(true);
         } catch {
           console.error('Respuesta inesperada del servidor:', errorText);
-          setToastMessage('Error desconocido. Revisa la consola.');
+          setToastMessage('Error desconocido.');
           setOpenToast(true);
         }
       }                      
@@ -194,11 +194,11 @@ const CreateClientForm = () => {
           </button>
         </form>
 
-        <Toast.Provider duration={5000}>
+        <Toast.Provider duration={1500}>
           <Toast.Root
             open={openToast}
             onOpenChange={setOpenToast}
-            duration={5000}
+            duration={1500}
             className="bg-gray-800 border border-cyan-500/30 rounded-lg p-4 shadow-lg animate-in fade-in slide-in-from-right-8"
           >
             <div className="flex items-start">
