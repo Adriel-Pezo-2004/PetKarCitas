@@ -8,9 +8,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { CalendarIcon } from "lucide-react"
-import * as Toast from '@radix-ui/react-toast';
-import { format } from "date-fns";
+import * as Toast from "@radix-ui/react-toast"
+import { format } from "date-fns"
 import { cn } from "@/lib/utils"
+import { es } from 'date-fns/locale';
 
 const CreateAppointmentForm = () => {
   const [formData, setFormData] = useState({
@@ -21,12 +22,12 @@ const CreateAppointmentForm = () => {
     time: "",
     clientId: "",
     dni: "",
-    address: "", 
-    zone: "", 
+    address: "",
+    zone: "",
   })
 
-    const [openToast, setOpenToast] = useState(false);
-    const [toastMessage, setToastMessage] = useState('');
+  const [openToast, setOpenToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState("")
 
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -50,43 +51,49 @@ const CreateAppointmentForm = () => {
     setFormData({ ...formData, [name]: value })
   }
 
-    const handleDateChange = (date) => {
+  const handleDateChange = (date) => {
     // Validar que el valor de la fecha no sea nulo
     if (date instanceof Date && !isNaN(date.getTime())) {
-      setFormData({ ...formData, date: date.toISOString().split("T")[0] }); // Guardar solo la parte de la fecha
+      // Sumar 1 día para corregir el problema de zona horaria
+      const adjustedDate = new Date(date);
+      adjustedDate.setDate(adjustedDate.getDate() + 1);
+  
+      setFormData({ ...formData, date: adjustedDate.toISOString().split("T")[0] }); // Guardar solo la parte de la fecha
+    } else if (date === undefined) {
+      setFormData({ ...formData, date: "" }); // Manejar el caso cuando se deselecciona la fecha
     } else {
       console.error("Fecha no válida");
       alert("Por favor, selecciona una fecha válida.");
     }
   };
-  
+
   const handleTimeChange = (e) => {
-    const time = e.target.value;
+    const time = e.target.value
     if (time) {
-      setFormData({ ...formData, time });
+      setFormData({ ...formData, time })
     } else {
-      console.error("Hora no válida");
-      alert("Por favor, selecciona una hora válida.");
+      console.error("Hora no válida")
+      alert("Por favor, selecciona una hora válida.")
     }
-  };
-  
+  }
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-  
+    e.preventDefault()
+
     if (!formData.date || !formData.time) {
-      console.error("Fecha u hora no válidas");
-      alert("Por favor, selecciona una fecha y una hora válidas.");
-      return;
+      console.error("Fecha u hora no válidas")
+      alert("Por favor, selecciona una fecha y una hora válidas.")
+      return
     }
 
-    const dateTime = new Date(`${formData.date}T${formData.time}:00`);
-  
+    const dateTime = new Date(`${formData.date}T${formData.time}:00`)
+
     if (isNaN(dateTime.getTime())) {
-      console.error("Fecha u hora no válidas");
-      alert("Por favor, selecciona una fecha y una hora válidas.");
-      return;
+      console.error("Fecha u hora no válidas")
+      alert("Por favor, selecciona una fecha y una hora válidas.")
+      return
     }
-  
+
     try {
       const response = await fetch("/api/appointments", {
         method: "POST",
@@ -97,8 +104,8 @@ const CreateAppointmentForm = () => {
           ...formData,
           date: dateTime.toISOString(),
         }),
-      });
-    
+      })
+
       if (response.ok) {
         setFormData({
           title: "",
@@ -110,22 +117,22 @@ const CreateAppointmentForm = () => {
           zone: "",
           clientId: "",
           dni: "",
-        });
-        setToastMessage("Cita creada exitosamente!");
-        setOpenToast(true);
+        })
+        setToastMessage("Cita creada exitosamente!")
+        setOpenToast(true)
         setTimeout(() => {
-          router.push(`/`);
-        }, 3000);
+          router.push(`/`)
+        }, 3000)
       } else {
-        const errorData = await response.json();
-        setToastMessage(`Error: ${errorData.error}`);
-        setOpenToast(true);
+        const errorData = await response.json()
+        setToastMessage(`Error: ${errorData.error}`)
+        setOpenToast(true)
       }
     } catch {
-      setToastMessage("Error desconocido.");
-      setOpenToast(true);
+      setToastMessage("Error desconocido.")
+      setOpenToast(true)
     }
-  };
+  }
 
   return (
     <div className="flex flex-col lg:flex-row items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 p-4 gap-8">
@@ -202,30 +209,30 @@ const CreateAppointmentForm = () => {
             />
           </div>
           <div>
-              <label htmlFor="type" className="block text-sm font-medium text-gray-300 mb-2">
-                Zona (mostradas en el mapa) *
-              </label>
-              <Select
-                name="zone"
-                value={formData.zone}
-                onValueChange={(value) => setFormData({ ...formData, zone: value })}
-                required
-              >
-                <SelectTrigger className="w-full md:w-[12rem] bg-gray-700 border-gray-600 text-gray-200 focus:ring-cyan-500 focus:ring-offset-gray-800">
-                  <SelectValue placeholder="Seleccione una zona" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-gray-700 text-gray-200">
-                  <SelectItem value="Zona Pacocha Norte">Zona Pacocha Norte</SelectItem>
-                  <SelectItem value="Zona Pacocha Sur">Zona Pacocha Sur</SelectItem>
-                  <SelectItem value="Zona Miramar-Gerónimo">Zona Miramar-Gerónimo</SelectItem>
-                  <SelectItem value="Zona Puerto">Zona Puerto</SelectItem>
-                  <SelectItem value="Zona Alto Ilo">Zona Alto Ilo</SelectItem>
-                  <SelectItem value="Zona Pampa Oeste">Zona Pampa Oeste</SelectItem>
-                  <SelectItem value="Zona Pampa Este">Zona Pampa Este</SelectItem>
-                  <SelectItem value="Zona Pampa Norte">Zona Pampa Norte</SelectItem>
-                  <SelectItem value="Zona Pampa Sur">Zona Pampa Sur</SelectItem>
-                </SelectContent>
-              </Select>
+            <label htmlFor="type" className="block text-sm font-medium text-gray-300 mb-2">
+              Zona (mostradas en el mapa) *
+            </label>
+            <Select
+              name="zone"
+              value={formData.zone}
+              onValueChange={(value) => setFormData({ ...formData, zone: value })}
+              required
+            >
+              <SelectTrigger className="w-full md:w-[12rem] bg-gray-700 border-gray-600 text-gray-200 focus:ring-cyan-500 focus:ring-offset-gray-800">
+                <SelectValue placeholder="Seleccione una zona" />
+              </SelectTrigger>
+              <SelectContent className="bg-gray-800 border-gray-700 text-gray-200">
+                <SelectItem value="Zona Pacocha Norte">Zona Pacocha Norte</SelectItem>
+                <SelectItem value="Zona Pacocha Sur">Zona Pacocha Sur</SelectItem>
+                <SelectItem value="Zona Miramar-Gerónimo">Zona Miramar-Gerónimo</SelectItem>
+                <SelectItem value="Zona Puerto">Zona Puerto</SelectItem>
+                <SelectItem value="Zona Alto Ilo">Zona Alto Ilo</SelectItem>
+                <SelectItem value="Zona Pampa Oeste">Zona Pampa Oeste</SelectItem>
+                <SelectItem value="Zona Pampa Este">Zona Pampa Este</SelectItem>
+                <SelectItem value="Zona Pampa Norte">Zona Pampa Norte</SelectItem>
+                <SelectItem value="Zona Pampa Sur">Zona Pampa Sur</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">
@@ -241,39 +248,39 @@ const CreateAppointmentForm = () => {
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Fecha *</label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal bg-gray-700 border-gray-600 text-gray-200",
-                      !formData.date && "text-gray-400",
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.date ? format(formData.date, "PPP") : <span></span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-700">
-                  <Calendar
-                    mode="single"
-                    selected={formData.date}
-                    onSelect={handleDateChange}
-                    initialFocus
-                    className="bg-gray-800 text-gray-200"
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Fecha *</label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal bg-gray-700 border-gray-600 text-gray-200",
+                    !formData.date && "text-gray-400",
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {formData.date ? format(new Date(formData.date), "PPP", { locale: es }) : <span>Seleccionar fecha</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-700">
+                <Calendar
+                  mode="single"
+                  selected={formData.date ? new Date(formData.date) : undefined}
+                  onSelect={handleDateChange}
+                  initialFocus
+                  className="bg-gray-800 text-gray-200"
+                  locale={es}  // Asegúrate de que el Calendar tenga esta prop
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Hora *</label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full justify-start text-left font-normal bg-gray-700 border-gray-600 text-gray-200 focus:ring-cyan-500 focus:border-cyan-500"
                   >
                     {formData.time ? formData.time : <span className="text-gray-400">--:--</span>}
@@ -311,15 +318,11 @@ const CreateAppointmentForm = () => {
             <div className="flex items-start">
               <div className="flex-1">
                 <Toast.Title className="font-medium text-cyan-400">
-                  {toastMessage.includes('Error') ? 'Error' : 'Éxito'}
+                  {toastMessage.includes("Error") ? "Error" : "Éxito"}
                 </Toast.Title>
-                <Toast.Description className="text-gray-300 mt-1">
-                  {toastMessage}
-                </Toast.Description>
+                <Toast.Description className="text-gray-300 mt-1">{toastMessage}</Toast.Description>
               </div>
-              <Toast.Close className="ml-4 text-gray-400 hover:text-gray-200">
-                ×
-              </Toast.Close>
+              <Toast.Close className="ml-4 text-gray-400 hover:text-gray-200">×</Toast.Close>
             </div>
           </Toast.Root>
           <Toast.Viewport className="fixed bottom-4 right-4 flex flex-col gap-2 w-full max-w-xs z-50" />
